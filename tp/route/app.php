@@ -16,4 +16,15 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 
+Route::get('getAll','\app\controller\first\listModel::getAll');
+
+Route::get('searchArea','\app\controller\first\search::byArea');
+
+Route::get('searchName','\app\controller\first\search::byName');
+
+Route::get('lpanDetail','\app\controller\first\lpanDetail::getDetail');
+
+Route::get('ldongSort','\app\controller\first\lpanDetail::sort');
+
+Route::get('ldongDetail','\app\controller\first\ldongDetail::getDetail');
 
