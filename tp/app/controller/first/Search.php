@@ -3,12 +3,13 @@
 
 namespace app\controller\first;
 
-
+use app\controller\first\Send;
 use app\BaseController;
 use app\model\Developer;
 use app\model\DevFirm;
 use app\model\District;
 use app\model\Lpan;
+use app\model\MultiDev;
 use app\model\ProCom;
 use app\model\ProEntity;
 use app\model\Register;
@@ -16,13 +17,31 @@ use think\facade\Request;
 
 class Search extends BaseController
 {
+    use Send;
     public function byArea()
     {
         $area = Request::param('area');
-        $areaRow = District::where('name','=',$area)->find();
-        $lpanList = $areaRow->lpan;
+        $limit = Request::param('limit');
+        $page = Request::param('page');
+        $lpanList = array();
 
-        dump($lpanList);
+
+        if($area == '全合肥'){
+
+            $lpanList = Lpan::order('reg_name','desc')->paginate([
+                'list_rows'=> $limit,
+                'page' => $page
+            ]);
+        }else{
+            $areaRow = District::where('name','=',$area)->find();
+            $lpanList = Lpan::where('area','=',$areaRow['id'])->order('reg_name','desc')->paginate([
+                'list_rows'=> $limit,
+                'page' => $page
+            ]);
+        }
+
+
+        //dump($lpanList);
         $result = array();
         foreach($lpanList as $lpan){
             //dump($register->toArray());
@@ -42,7 +61,7 @@ class Search extends BaseController
             $devCom = DevFirm::where('id','=',$lpan['developers'])->field('id,name')->find();
             //dump($devCom->toArray());
             $row['devc_name'] = $devCom['name'];
-            $devlist = $devCom->multiDev;
+            $devlist = MultiDev::where('devc_id','=',$devCom['id'])->select();
             // dump($devlist->toArray());
             //将开发实体对应的多个开发商名字查询出来
             $res= array();
@@ -56,19 +75,27 @@ class Search extends BaseController
             $proEntity = ProEntity::where('id','=',$lpan['property_company'])->field('name,simple_id')->find();
             //dump($proEntity->toArray());
             $row['proc_name'] = $proEntity['name'];
+
             $proShort = ProCom::where('id','=',$proEntity['simple_id'])->find();
             //dump($proShort);
             $row['pro_short'] = $proShort['name'];
             $row['position'] = $lpan['position'];
+            $row['update_time'] = $lpan['update_time'];
             array_push($result,$row);
-            dump($row);
+            //dump($row);
         }
-        dump(json_encode($result,JSON_UNESCAPED_UNICODE));
+       // dump(json_encode($result,JSON_UNESCAPED_UNICODE));
+        self::returnMsg('200','sucess',$result);
     }
     public function byName()
     {
+        $limit = Request::param('limit');
+        $page = Request::param('page');
         $name = Request::param('name');
-        $lpanList = Lpan::where('register_name','like','%'.$name.'%')->whereOr('ad_name','like','%'.$name.'%')->select();
+        $lpanList = Lpan::where('register_name','like','%'.$name.'%')->whereOr('ad_name','like','%'.$name.'%')->order('reg_name','desc')->paginate([
+            'list_rows'=> $limit,
+            'page' => $page
+        ]);
 
         $result = array();
         foreach($lpanList as $lpan){
@@ -88,7 +115,7 @@ class Search extends BaseController
             $devCom = DevFirm::where('id','=',$lpan['developers'])->field('id,name')->find();
             //dump($devCom->toArray());
             $row['devc_name'] = $devCom['name'];
-            $devlist = $devCom->multiDev;
+            $devlist = MultiDev::where('devc_id','=',$devCom['id'])->select();
             // dump($devlist->toArray());
             //将开发实体对应的多个开发商名字查询出来
             $res= array();
@@ -106,10 +133,12 @@ class Search extends BaseController
             //dump($proShort);
             $row['pro_short'] = $proShort['name'];
             $row['position'] = $lpan['position'];
+            $row['update_time'] = $lpan['update_time'];
             array_push($result,$row);
-            dump($row);
+            //dump($row);
         }
-        dump(json_encode($result,JSON_UNESCAPED_UNICODE));
+        //dump(json_encode($result,JSON_UNESCAPED_UNICODE));
+        self::returnMsg('200','sucess',$result);
 
     }
 }

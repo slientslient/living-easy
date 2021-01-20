@@ -1,7 +1,7 @@
 <?php
-namespace app\api\controller;
+namespace app\controller\first;
 
-use think\Controller;
+
 use think\Request;
 
 trait Send

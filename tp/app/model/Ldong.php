@@ -10,7 +10,7 @@ class Ldong extends Model
 {
     public function houseType()
     {
-        return $this->hasMany(HouseType::class,'ld_id');
+        return $this->hasMany(RoomNum::class,'ld_id');
     }
 
 }
