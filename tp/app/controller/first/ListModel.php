@@ -14,7 +14,7 @@ use app\model\MultiDev;
 use app\model\ProCom;
 use app\model\ProEntity;
 use think\facade\Request;
-
+/*该模块的方法暂时弃用*/
 class ListModel extends BaseController
 {
    use Send;

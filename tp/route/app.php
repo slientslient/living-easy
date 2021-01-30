@@ -28,3 +28,9 @@ Route::get('ldongSort','\app\controller\first\lpanDetail::sort');
 
 Route::get('ldongDetail','\app\controller\first\ldongDetail::getDetail');
 
+Route::get('getNewRegister','\app\controller\first\secondIndex::getNewRegister');
+
+Route::get('getKpiData','\app\controller\first\secondIndex::getKpiData');
+
+Route::get('getChangeData','\app\controller\first\secondIndex::getChangeData');
+

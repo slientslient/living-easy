@@ -23,24 +23,29 @@ class Search extends BaseController
         $area = Request::param('area');
         $limit = Request::param('limit');
         $page = Request::param('page');
+        $areaRow = District::where('name','=',$area)->find();
         $lpanList = array();
-
-
-        if($area == '全合肥'){
-
+        if($areaRow['id'] == 0){
             $lpanList = Lpan::order('reg_name','desc')->paginate([
                 'list_rows'=> $limit,
                 'page' => $page
             ]);
+        }else if($areaRow['id'] == 998){
+            $lpanList = Lpan::where('area','in',[10,11,12,13,14])->order('reg_name','desc')->paginate([
+                'list_rows'=> $limit,
+                'page' => $page
+            ]);
+        }else if($areaRow['id'] == 999){
+            $lpanList = Lpan::where('area','in',[1,2,3,4,5,6,7,8,9])->order('reg_name','desc')->paginate([
+                'list_rows'=> $limit,
+                'page' => $page
+            ]);
         }else{
-            $areaRow = District::where('name','=',$area)->find();
             $lpanList = Lpan::where('area','=',$areaRow['id'])->order('reg_name','desc')->paginate([
                 'list_rows'=> $limit,
                 'page' => $page
             ]);
         }
-
-
         //dump($lpanList);
         $result = array();
         foreach($lpanList as $lpan){
